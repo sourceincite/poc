@@ -3,7 +3,7 @@
 Oracle Knowledge Management Castor Library XML External Entity Injection Information Disclosure Vulnerability
 Found by: Steven Seeley of Source Incite
 CVE: CVE-2016-3533
-SRC: SRC-2016-23
+SRC: SRC-2016-0023
 Notes:
 - You can steal the C:/Oracle/Knowledge/IM/instances/InfoManager/custom.xml file via the XXE bug which contains the db user/pass
 - This PoC simply performs an Out-of-Band request
